@@ -1,0 +1,343 @@
+import React, { useState, useMemo } from 'react';
+import { Search, Lock, Check, Eye, Trophy } from 'lucide-react';
+
+const PYTHON_COMMANDS = [
+  { dex_id: 1, name: 'print', region_id: 1, category: 'Basic I/O', difficulty: 'Beginner' },
+  { dex_id: 2, name: 'input', region_id: 1, category: 'Basic I/O', difficulty: 'Beginner' },
+  { dex_id: 64, name: 'open', region_id: 1, category: 'Basic I/O', difficulty: 'Beginner' },
+  { dex_id: 3, name: 'if', region_id: 1, category: 'Control Flow', difficulty: 'Beginner' },
+  { dex_id: 4, name: 'else', region_id: 1, category: 'Control Flow', difficulty: 'Beginner' },
+  { dex_id: 5, name: 'elif', region_id: 1, category: 'Control Flow', difficulty: 'Beginner' },
+  { dex_id: 6, name: 'for', region_id: 1, category: 'Control Flow', difficulty: 'Beginner' },
+  { dex_id: 7, name: 'while', region_id: 1, category: 'Control Flow', difficulty: 'Beginner' },
+  { dex_id: 8, name: 'break', region_id: 1, category: 'Control Flow', difficulty: 'Beginner' },
+  { dex_id: 9, name: 'continue', region_id: 1, category: 'Control Flow', difficulty: 'Beginner' },
+  { dex_id: 10, name: 'pass', region_id: 1, category: 'Control Flow', difficulty: 'Beginner' },
+  { dex_id: 91, name: 'for-else', region_id: 1, category: 'Control Flow', difficulty: 'Intermediate' },
+  { dex_id: 92, name: 'while-else', region_id: 1, category: 'Control Flow', difficulty: 'Intermediate' },
+  { dex_id: 11, name: 'return', region_id: 1, category: 'Functions', difficulty: 'Beginner' },
+  { dex_id: 12, name: 'def', region_id: 1, category: 'Functions', difficulty: 'Beginner' },
+  { dex_id: 13, name: 'lambda', region_id: 1, category: 'Functions', difficulty: 'Intermediate' },
+  { dex_id: 96, name: 'positional arguments', region_id: 1, category: 'Functions', difficulty: 'Beginner' },
+  { dex_id: 97, name: 'keyword arguments', region_id: 1, category: 'Functions', difficulty: 'Beginner' },
+  { dex_id: 98, name: 'default arguments', region_id: 1, category: 'Functions', difficulty: 'Beginner' },
+  { dex_id: 99, name: '*args', region_id: 1, category: 'Functions', difficulty: 'Intermediate' },
+  { dex_id: 100, name: '**kwargs', region_id: 1, category: 'Functions', difficulty: 'Intermediate' },
+  { dex_id: 102, name: 'recursion', region_id: 1, category: 'Functions', difficulty: 'Intermediate' },
+  { dex_id: 53, name: 'int', region_id: 1, category: 'Data Types', difficulty: 'Beginner' },
+  { dex_id: 45, name: 'float', region_id: 1, category: 'Data Types', difficulty: 'Beginner' },
+  { dex_id: 36, name: 'bool', region_id: 1, category: 'Data Types', difficulty: 'Beginner' },
+  { dex_id: 75, name: 'str', region_id: 1, category: 'Data Types', difficulty: 'Beginner' },
+  { dex_id: 58, name: 'list', region_id: 1, category: 'Data Types', difficulty: 'Beginner' },
+  { dex_id: 77, name: 'tuple', region_id: 1, category: 'Data Types', difficulty: 'Beginner' },
+  { dex_id: 72, name: 'set', region_id: 1, category: 'Data Types', difficulty: 'Beginner' },
+  { dex_id: 78, name: 'type', region_id: 1, category: 'Data Types', difficulty: 'Beginner' },
+  { dex_id: 57, name: 'len', region_id: 1, category: 'Built-ins', difficulty: 'Beginner' },
+  { dex_id: 60, name: 'max', region_id: 1, category: 'Built-ins', difficulty: 'Beginner' },
+  { dex_id: 61, name: 'min', region_id: 1, category: 'Built-ins', difficulty: 'Beginner' },
+  { dex_id: 68, name: 'range', region_id: 1, category: 'Built-ins', difficulty: 'Beginner' },
+  { dex_id: 41, name: 'enumerate', region_id: 1, category: 'Built-ins', difficulty: 'Intermediate' },
+  { dex_id: 59, name: 'map', region_id: 1, category: 'Built-ins', difficulty: 'Intermediate' },
+  { dex_id: 44, name: 'filter', region_id: 1, category: 'Built-ins', difficulty: 'Intermediate' },
+  { dex_id: 74, name: 'sorted', region_id: 1, category: 'Built-ins', difficulty: 'Intermediate' },
+  { dex_id: 80, name: 'zip', region_id: 1, category: 'Built-ins', difficulty: 'Intermediate' },
+  { dex_id: 85, name: 'list comprehension', region_id: 1, category: 'Comprehensions', difficulty: 'Intermediate' },
+  { dex_id: 86, name: 'dict comprehension', region_id: 1, category: 'Comprehensions', difficulty: 'Intermediate' },
+  { dex_id: 87, name: 'set comprehension', region_id: 1, category: 'Comprehensions', difficulty: 'Intermediate' },
+  { dex_id: 88, name: 'generator expression', region_id: 1, category: 'Comprehensions', difficulty: 'Advanced' },
+  { dex_id: 15, name: 'class', region_id: 1, category: 'OOP', difficulty: 'Intermediate' },
+  { dex_id: 103, name: '__init__', region_id: 1, category: 'OOP', difficulty: 'Intermediate' },
+  { dex_id: 104, name: '__str__', region_id: 1, category: 'OOP', difficulty: 'Intermediate' },
+  { dex_id: 105, name: '__repr__', region_id: 1, category: 'OOP', difficulty: 'Intermediate' },
+  { dex_id: 108, name: 'inheritance', region_id: 1, category: 'OOP', difficulty: 'Intermediate' },
+  { dex_id: 109, name: 'method overriding', region_id: 1, category: 'OOP', difficulty: 'Advanced' },
+  { dex_id: 110, name: 'super', region_id: 1, category: 'OOP', difficulty: 'Advanced' },
+  { dex_id: 23, name: 'try', region_id: 1, category: 'Exceptions', difficulty: 'Intermediate' },
+  { dex_id: 24, name: 'except', region_id: 1, category: 'Exceptions', difficulty: 'Intermediate' },
+  { dex_id: 25, name: 'finally', region_id: 1, category: 'Exceptions', difficulty: 'Intermediate' },
+  { dex_id: 22, name: 'raise', region_id: 1, category: 'Exceptions', difficulty: 'Intermediate' },
+  { dex_id: 118, name: 'Exception', region_id: 1, category: 'Exceptions', difficulty: 'Intermediate' },
+  { dex_id: 119, name: 'ValueError', region_id: 1, category: 'Exceptions', difficulty: 'Intermediate' },
+  { dex_id: 120, name: 'TypeError', region_id: 1, category: 'Exceptions', difficulty: 'Intermediate' },
+  { dex_id: 26, name: 'with', region_id: 1, category: 'Context Management', difficulty: 'Advanced' },
+  { dex_id: 116, name: '__enter__', region_id: 1, category: 'Context Management', difficulty: 'Advanced' },
+  { dex_id: 117, name: '__exit__', region_id: 1, category: 'Context Management', difficulty: 'Advanced' },
+  { dex_id: 14, name: 'yield', region_id: 1, category: 'Generators', difficulty: 'Advanced' },
+  { dex_id: 114, name: 'generator function', region_id: 1, category: 'Generators', difficulty: 'Advanced' },
+  { dex_id: 28, name: 'await', region_id: 1, category: 'Async', difficulty: 'Expert' },
+  { dex_id: 29, name: 'async', region_id: 1, category: 'Async', difficulty: 'Expert' },
+  { dex_id: 30, name: 'match', region_id: 1, category: 'Pattern Matching', difficulty: 'Advanced' },
+  { dex_id: 31, name: 'case', region_id: 1, category: 'Pattern Matching', difficulty: 'Advanced' },
+];
+
+const CATEGORIES_INFO = {
+  'Basic I/O': { color: 'bg-blue-500' },
+  'Control Flow': { color: 'bg-green-500' },
+  'Functions': { color: 'bg-yellow-500' },
+  'Data Types': { color: 'bg-purple-500' },
+  'Built-ins': { color: 'bg-red-500' },
+  'Comprehensions': { color: 'bg-indigo-500' },
+  'OOP': { color: 'bg-teal-500' },
+  'Exceptions': { color: 'bg-orange-500' },
+  'Context Management': { color: 'bg-violet-500' },
+  'Generators': { color: 'bg-pink-500' },
+  'Async': { color: 'bg-red-600' },
+  'Pattern Matching': { color: 'bg-emerald-500' },
+};
+
+export default function CodedexApp() {
+  const [userProgress, setUserProgress] = useState({
+    seen: [1, 2, 3, 4, 5, 6, 7, 12, 53, 75, 58, 15, 23, 24, 28, 29, 30],
+    used: [1, 2, 3, 4, 5, 6, 7, 12, 53, 75, 58]
+  });
+  
+  const [currentView, setCurrentView] = useState('languages'); // languages, categories, commands
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const categories = useMemo(() => {
+    return Object.keys(CATEGORIES_INFO);
+  }, []);
+
+  const categoryStats = useMemo(() => {
+    const stats = {};
+    categories.forEach(cat => {
+      const commands = PYTHON_COMMANDS.filter(c => c.category === cat);
+      const used = commands.filter(c => userProgress.used.includes(c.dex_id)).length;
+      const total = commands.length;
+      stats[cat] = { used, total };
+    });
+    return stats;
+  }, [userProgress, categories]);
+
+  const totalStats = useMemo(() => {
+    const total = PYTHON_COMMANDS.length;
+    const used = userProgress.used.length;
+    return { used, total };
+  }, [userProgress]);
+
+  const filteredCommands = useMemo(() => {
+    if (!selectedCategory) return [];
+    return PYTHON_COMMANDS
+      .filter(cmd => cmd.category === selectedCategory)
+      .filter(cmd => cmd.name.toLowerCase().includes(searchQuery.toLowerCase()))
+      .sort((a, b) => a.dex_id - b.dex_id);
+  }, [selectedCategory, searchQuery]);
+
+  const toggleStatus = (dex_id, status) => {
+    setUserProgress(prev => {
+      const newProgress = { ...prev };
+      if (status === 'used') {
+        if (prev.used.includes(dex_id)) {
+          newProgress.used = prev.used.filter(i => i !== dex_id);
+        } else {
+          newProgress.used = [...prev.used, dex_id];
+          if (!prev.seen.includes(dex_id)) {
+            newProgress.seen = [...prev.seen, dex_id];
+          }
+        }
+      } else if (status === 'seen') {
+        if (prev.seen.includes(dex_id)) {
+          newProgress.seen = prev.seen.filter(i => i !== dex_id);
+          newProgress.used = prev.used.filter(i => i !== dex_id);
+        } else {
+          newProgress.seen = [...prev.seen, dex_id];
+        }
+      }
+      return newProgress;
+    });
+  };
+
+  const getStatusIcon = (dex_id) => {
+    if (userProgress.used.includes(dex_id)) {
+      return <Check className="w-5 h-5 text-green-500" />;
+    } else if (userProgress.seen.includes(dex_id)) {
+      return <Eye className="w-5 h-5 text-blue-500" />;
+    }
+    return <Lock className="w-5 h-5 text-gray-400" />;
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-sky-300 to-cyan-200">
+      <div className="max-w-4xl mx-auto p-4">
+        
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6 pt-2">
+          <h1 className="text-3xl font-bold text-cyan-700">CODEDEX</h1>
+          <div className="text-right">
+            <div className="text-cyan-700 font-semibold">Caught: {totalStats.used}</div>
+          </div>
+        </div>
+
+        {/* Languages View (Home) */}
+        {currentView === 'languages' && (
+          <div className="space-y-4">
+            <div
+              onClick={() => setCurrentView('categories')}
+              className="bg-gradient-to-r from-white/80 to-white/60 backdrop-blur rounded-3xl p-8 shadow-lg cursor-pointer hover:shadow-xl transition-all border-2 border-white/50 relative overflow-hidden"
+            >
+              <div className="flex justify-between items-center relative z-10">
+                <div className="flex-1">
+                  <h2 className="text-3xl font-bold text-cyan-700 uppercase mb-3">PYTHON</h2>
+                  <div className="w-64 bg-white/50 rounded-full h-4 mb-3 overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-500"
+                      style={{ width: `${(totalStats.used / totalStats.total) * 100}%` }}
+                    />
+                  </div>
+                  <div className="text-3xl font-bold text-cyan-600 mb-4">
+                    {totalStats.used} / {totalStats.total}
+                  </div>
+                  <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center border-4 border-yellow-500">
+                    <Trophy className="w-8 h-8 text-yellow-700" />
+                  </div>
+                </div>
+                
+                <div className="text-right flex items-center justify-center">
+                  <div className="text-9xl font-black bg-gradient-to-br from-cyan-400 to-blue-500 bg-clip-text text-transparent opacity-20">
+                    PY
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Categories View */}
+        {currentView === 'categories' && (
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => setCurrentView('languages')}
+                className="bg-white/80 backdrop-blur rounded-full p-3 shadow-lg hover:shadow-xl transition-all"
+              >
+                <span className="text-2xl">←</span>
+              </button>
+              <h2 className="text-2xl font-bold text-cyan-700">PYTHON</h2>
+            </div>
+
+            <div className="space-y-4">
+              {categories.map(cat => {
+                const stats = categoryStats[cat];
+                const info = CATEGORIES_INFO[cat];
+                const percentage = (stats.used / stats.total) * 100;
+                
+                return (
+                  <div
+                    key={cat}
+                    onClick={() => {
+                      setSelectedCategory(cat);
+                      setCurrentView('commands');
+                    }}
+                    className="bg-gradient-to-r from-white/80 to-white/60 backdrop-blur rounded-3xl p-6 shadow-lg cursor-pointer hover:shadow-xl transition-all border-2 border-white/50 relative overflow-hidden"
+                  >
+                    <div className="flex justify-between items-start relative z-10">
+                      <div className="flex-1">
+                        <h2 className="text-2xl font-bold text-cyan-700 uppercase mb-2">{cat}</h2>
+                        <div className="w-48 bg-white/50 rounded-full h-3 mb-2 overflow-hidden">
+                          <div 
+                            className={`h-full ${info.color} transition-all duration-500`}
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                        <div className="text-2xl font-bold text-cyan-600">
+                          {stats.used} / {stats.total}
+                        </div>
+                        <div className="mt-3 w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center border-4 border-yellow-500">
+                          <Trophy className="w-6 h-6 text-yellow-700" />
+                        </div>
+                      </div>
+                      
+                      <div className="text-right flex items-center justify-center">
+                        <div className="text-9xl font-bold text-cyan-700/10">
+                          PY
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Commands List View */}
+        {currentView === 'commands' && (
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => {
+                  setCurrentView('categories');
+                  setSelectedCategory(null);
+                  setSearchQuery('');
+                }}
+                className="bg-white/80 backdrop-blur rounded-full p-3 shadow-lg hover:shadow-xl transition-all"
+              >
+                <span className="text-2xl">←</span>
+              </button>
+              <h2 className="text-2xl font-bold text-cyan-700">{selectedCategory}</h2>
+            </div>
+
+            <div className="mb-4">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-cyan-600 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Search commands..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-white/80 backdrop-blur border-2 border-white/50 rounded-full pl-12 pr-4 py-3 text-cyan-800 placeholder-cyan-500 focus:outline-none focus:border-cyan-400"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {filteredCommands.map(cmd => (
+                <div
+                  key={cmd.dex_id}
+                  className="bg-white/80 backdrop-blur rounded-2xl p-4 shadow-lg border-2 border-white/50 hover:shadow-xl transition-all"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4 flex-1">
+                      <div className="bg-cyan-100 rounded-full p-3">
+                        {getStatusIcon(cmd.dex_id)}
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-mono font-bold text-xl text-cyan-800">{cmd.name}</div>
+                        <div className="text-sm text-cyan-600">DEX #{cmd.dex_id}</div>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => toggleStatus(cmd.dex_id, 'seen')}
+                        className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                          userProgress.seen.includes(cmd.dex_id)
+                            ? 'bg-blue-500 text-white shadow-lg'
+                            : 'bg-white/60 text-cyan-700 border-2 border-cyan-200'
+                        }`}
+                      >
+                        <Eye className="w-4 h-4 inline mr-1" />
+                        Seen
+                      </button>
+                      <button
+                        onClick={() => toggleStatus(cmd.dex_id, 'used')}
+                        className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                          userProgress.used.includes(cmd.dex_id)
+                            ? 'bg-green-500 text-white shadow-lg'
+                            : 'bg-white/60 text-cyan-700 border-2 border-cyan-200'
+                        }`}
+                      >
+                        <Check className="w-4 h-4 inline mr-1" />
+                        Used
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
