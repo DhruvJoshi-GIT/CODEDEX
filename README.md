@@ -27,3 +27,13 @@ A scalable architecture for adding new languages and regions
 CODEDEX is built as a frontend-first MVP using React, with a long-term roadmap that includes backend verification, project-based analysis, and AI-assisted skill validation.
 
 This project is not intended to replace portfolios or repositories, but to complement them by providing a structured, transparent view of learning progression and real-world language usage.
+
+---
+
+## Author
+
+**Dhruv Joshi**
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/dhruv-joshi-52769b265/)
+[![Email](https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:mdhruvjoshi@gmail.com)
+[![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/users/dhruvjoshi.28)
