@@ -16,6 +16,16 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "CODEDEX — Catch Every Construct",
   description: "A Pokédex-inspired gamified skill verification platform for programmers",
+  themeColor: "#0c1220",
+  other: {
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "black-translucent",
+  },
+};
+
+export const viewport = {
+  themeColor: "#0c1220",
+  viewportFit: "cover" as const,
 };
 
 export default function RootLayout({
@@ -27,6 +37,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
+        style={{ backgroundColor: "#0c1220" }}
       >
         <Navbar />
         <main className="pt-16">
