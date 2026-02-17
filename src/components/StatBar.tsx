@@ -1,0 +1,33 @@
+'use client';
+
+import { motion } from 'framer-motion';
+
+interface StatBarProps {
+  label: string;
+  value: number;
+  max: number;
+  color?: string;
+  delay?: number;
+}
+
+export function StatBar({ label, value, max, color = '#34d399', delay = 0 }: StatBarProps) {
+  const percentage = max > 0 ? (value / max) * 100 : 0;
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex justify-between text-sm">
+        <span className="text-slate-400">{label}</span>
+        <span className="text-slate-300 font-medium">{value}/{max}</span>
+      </div>
+      <div className="h-2.5 bg-slate-700/50 rounded-full overflow-hidden">
+        <motion.div
+          className="h-full rounded-full"
+          style={{ backgroundColor: color }}
+          initial={{ width: 0 }}
+          animate={{ width: `${percentage}%` }}
+          transition={{ duration: 1, ease: 'easeOut', delay }}
+        />
+      </div>
+    </div>
+  );
+}
