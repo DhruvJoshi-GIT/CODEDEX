@@ -1,7 +1,16 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Linkedin, Mail, MessageCircle, Code2 } from 'lucide-react';
+import { Linkedin, Mail, MessageCircle, Code2, Github } from 'lucide-react';
+import type { SVGProps } from 'react';
+
+function XIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
 
 const socials = [
   {
@@ -9,6 +18,18 @@ const socials = [
     label: 'LinkedIn',
     href: 'https://www.linkedin.com/in/dhruv-joshi-52769b265/',
     color: '#0a66c2',
+  },
+  {
+    icon: XIcon,
+    label: 'X',
+    href: 'https://x.com/mdhruvjoshi',
+    color: '#a1a1aa',
+  },
+  {
+    icon: Github,
+    label: 'GitHub',
+    href: 'https://github.com/DhruvJoshi-GIT',
+    color: '#8b949e',
   },
   {
     icon: Mail,
@@ -30,7 +51,6 @@ export function Footer() {
     e.preventDefault();
     navigator.clipboard.writeText('dhruvjoshi.28');
     const el = e.currentTarget as HTMLElement;
-    const original = el.getAttribute('data-label');
     el.setAttribute('data-copied', 'true');
     setTimeout(() => el.setAttribute('data-copied', ''), 2000);
   };
@@ -56,7 +76,7 @@ export function Footer() {
           </motion.div>
 
           {/* Social links */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-2.5">
             {socials.map((social) => (
               <motion.a
                 key={social.label}
@@ -66,7 +86,7 @@ export function Footer() {
                 onClick={social.label === 'Discord' ? handleDiscordClick : undefined}
                 whileHover={{ scale: 1.1, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                className="group relative flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all"
+                className="group relative flex items-center gap-2 px-3.5 py-2 rounded-xl border transition-all"
                 style={{
                   backgroundColor: `${social.color}10`,
                   borderColor: `${social.color}25`,
@@ -75,7 +95,7 @@ export function Footer() {
               >
                 <social.icon className="w-4 h-4" style={{ color: social.color }} />
                 <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
-                  {social.label === 'Discord' ? 'dhruvjoshi.28' : social.label}
+                  {social.label === 'Discord' ? 'dhruvjoshi.28' : social.label === 'X' ? '@mdhruvjoshi' : social.label}
                 </span>
                 {social.label === 'Discord' && (
                   <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs bg-slate-700 text-emerald-400 px-2 py-1 rounded opacity-0 group-[&[data-copied='true']]:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
